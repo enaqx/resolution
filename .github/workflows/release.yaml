@@ -22,30 +22,33 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - run: echo 'Starting the workflow'
 
-      - name: Setup node
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12
-          always-auth: true
-          registry-url: "https://registry.npmjs.org"
+      # - uses: actions/checkout@v2
 
-      - run:
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}"
-          > ~/.npmrc
+      # - name: Setup node
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: 12
+      #     always-auth: true
+      #     registry-url: "https://registry.npmjs.org"
 
-      - name: Install Dependencies
-        run: yarn install
+      # - run:
+      #     echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}"
+      #     > ~/.npmrc
 
-      - name: Build
-        run: yarn build
+      # - name: Install Dependencies
+      #   run: yarn install
 
-      - name: Publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        run: yarn publish
+      # - name: Build
+      #   run: yarn build
 
-      - name: Push version tag
-        run: yarn release:tag
+      # - name: Publish
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      #   run: yarn publish
+
+      # - name: Push version tag
+      #   run: yarn release:tag
