@@ -26,7 +26,50 @@ jobs:
     steps:
       - run: echo 'Starting the workflow'
 
-      # - uses: actions/checkout@v2
+      - uses: oprypin/find-latest-tag@v1
+        id: get-latest-tag
+        with:
+          repository: enaqx/resolution # current repositiry
+          releases-only: false
+
+      - name: "Get next versions"
+        id: semvers
+        uses: "WyriHaximus/github-action-next-semvers@v1"
+        with:
+          version: ${{ steps.get-latest-tag.outputs.tag }}
+
+      - name: Set new tag
+        id: set-new-tag
+        run: |
+          if [[ ${{ github.event.inputs.releaseType }} == major ]]; then
+            echo "tag=${{ steps.semvers.outputs.v_major }}" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.event.inputs.releaseType }} == minor ]]; then
+            echo "tag=${{ steps.semvers.outputs.v_minor }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${{ steps.semvers.outputs.v_patch }}" >> $GITHUB_OUTPUT
+
+      - name: "Log inputs"
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.get-latest-tag.outputs.tag }}
+          echo ${{ steps.set-new-tag.outputs.tag }}
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Update Changelog
+        uses: stefanzweifel/changelog-updater-action@v1
+        with:
+          latest-version: ${{ steps.set-new-tag.outputs.tag }}
+          release-notes: ${{ github.event.inputs.changeLog }}
+
+      - name: Commit updated CHANGELOG
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ github.event.release.target_commitish }}
+          commit_message: Release new version ${{ steps.set-new-tag.outputs.tag }}
+          file_pattern: CHANGELOG.md
 
       # - name: Setup node
       #   uses: actions/setup-node@v2
