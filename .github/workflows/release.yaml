@@ -1,11 +1,23 @@
-name: Release
+# Manual workflow to release new package version
+name: Manual-Version-Release
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      changeLog:
+        description: "Change Log"
+        required: true
+        default: ""
+      releaseType:
+        type: choice
+        description: Select patch/minor/major
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   publish:
@@ -18,7 +30,7 @@ jobs:
         with:
           node-version: 12
           always-auth: true
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - run:
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}"
