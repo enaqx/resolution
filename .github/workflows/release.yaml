@@ -47,6 +47,7 @@ jobs:
             echo "tag=${{ steps.semvers.outputs.v_minor }}" >> $GITHUB_OUTPUT
           else
             echo "tag=${{ steps.semvers.outputs.v_patch }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: "Log inputs"
         run: |
