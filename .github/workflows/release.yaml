@@ -29,7 +29,7 @@ jobs:
       - uses: oprypin/find-latest-tag@v1
         id: get-latest-tag
         with:
-          repository: enaqx/resolution # current repositiry
+          repository: unstoppabledomains/resolution # current repositiry
           releases-only: false
 
       - name: "Get next versions"
@@ -57,6 +57,11 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: 'Create tag'
+        run: |
+          git tag ${{ steps.set-new-tag.outputs.tag }}
+          git push origin --tags
 
       - name: Update Changelog
         uses: stefanzweifel/changelog-updater-action@v1
