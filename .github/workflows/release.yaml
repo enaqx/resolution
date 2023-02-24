@@ -64,40 +64,27 @@ jobs:
           git tag ${{ steps.set-new-tag.outputs.tag }}
           git push origin --tags
 
-      - name: Update Changelog
-        uses: stefanzweifel/changelog-updater-action@v1
+      - name: Setup node
+        uses: actions/setup-node@v2
         with:
-          latest-version: ${{ steps.set-new-tag.outputs.tag }}
-          release-notes: ${{ github.event.inputs.changeLog }}
+          node-version: 16
+          always-auth: true
+          registry-url: "https://registry.npmjs.org"
 
-      - name: Commit updated CHANGELOG
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          branch: ${{ github.event.release.target_commitish }}
-          commit_message: Release new version ${{ steps.set-new-tag.outputs.tag }}
-          file_pattern: CHANGELOG.md
+      - run:
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}"
+          > ~/.npmrc
 
-      # - name: Setup node
-      #   uses: actions/setup-node@v2
-      #   with:
-      #     node-version: 12
-      #     always-auth: true
-      #     registry-url: "https://registry.npmjs.org"
+      - name: Install Dependencies
+        run: yarn install
 
-      # - run:
-      #     echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}"
-      #     > ~/.npmrc
+      - name: Build
+        run: yarn build
 
-      # - name: Install Dependencies
-      #   run: yarn install
-
-      # - name: Build
-      #   run: yarn build
-
-      # - name: Publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-      #   run: yarn publish
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        run: yarn publish
 
       # - name: Push version tag
       #   run: yarn release:tag
