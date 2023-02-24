@@ -1,5 +1,5 @@
 {
-  "name": "resolution",
+  "name": "resolution-enaqx",
   "version": "8.5.1",
   "description": "Domain Resolution for blockchain domains",
   "main": "./build/index.js",
