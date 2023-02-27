@@ -1,6 +1,6 @@
 {
   "name": "resolution-enaqx",
-  "version": "3.3.3",
+  "version": "v9.0.0",
   "description": "Domain Resolution for blockchain domains",
   "main": "./build/index.js",
   "directories": {
