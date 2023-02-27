@@ -57,7 +57,6 @@ jobs:
       - name: New package.json version
         run: yarn version --new-version ${{ steps.set-new-tag.outputs.tag }} --no-git-tag-version
 
-
       - name: "Create tag"
         run: |
           git tag ${{ steps.set-new-tag.outputs.tag }}
@@ -84,3 +83,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: yarn publish
+      
+      - name: Commit new version
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ github.event.release.target_commitish }}
+          commit_message: Release new version ${{ steps.set-new-tag.outputs.tag }}
