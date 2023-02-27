@@ -46,9 +46,6 @@ jobs:
             echo "tag=${{ steps.semvers.outputs.v_patch }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: New package.json version
-        run: yarn version --new-version ${{ steps.set-new-tag.outputs.tag }} --no-git-tag-version
-
       - name: "Log inputs"
         run: |
           echo Release Version: ${{ steps.set-new-tag.outputs.tag }}
@@ -56,6 +53,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: New package.json version
+        run: yarn version --new-version ${{ steps.set-new-tag.outputs.tag }} --no-git-tag-version
+
 
       - name: "Create tag"
         run: |
