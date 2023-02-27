@@ -1,9 +1,6 @@
 # Manual workflow to release new package version
 name: Manual-Version-Release
 
-env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 on:
   workflow_dispatch:
     inputs:
@@ -49,23 +46,24 @@ jobs:
             echo "tag=${{ steps.semvers.outputs.v_patch }}" >> $GITHUB_OUTPUT
           fi
 
+      - name: New package.json version
+        run: yarn version --new-version ${{ steps.set-new-tag.outputs.tag }} --no-git-tag-version
+
       - name: "Log inputs"
         run: |
-          echo $RELEASE_VERSION
-          echo ${{ steps.get-latest-tag.outputs.tag }}
-          echo ${{ steps.set-new-tag.outputs.tag }}
+          echo Release Version: ${{ steps.set-new-tag.outputs.tag }}
 
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: 'Create tag'
+      - name: "Create tag"
         run: |
           git tag ${{ steps.set-new-tag.outputs.tag }}
           git push origin --tags
 
       - name: Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           always-auth: true
@@ -85,6 +83,3 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
         run: yarn publish
-
-      # - name: Push version tag
-      #   run: yarn release:tag
